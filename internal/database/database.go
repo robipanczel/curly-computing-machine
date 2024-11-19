@@ -14,27 +14,49 @@ import (
 
 type Service interface {
 	Health() map[string]string
+
+	ListBooks() ([]Book, error)
+	AddBook() (*Book, error)
+	BorrowBook() (*Book, error)
+
+	CreateAuthor() (*Author, error)
+	GetAuthor() (*Author, error)
+
+	CreateBorrower() (*Borrower, error)
+	GetBorrower() (*Borrower, error)
+	BorrowedBooks() ([]Book, error)
+	// TODO: Could be useful ReturnBorrowed()
 }
 
 type service struct {
-	db *mongo.Client
+	db            *mongo.Client
+	booksColl     *mongo.Collection
+	authorsColl   *mongo.Collection
+	borrowersColl *mongo.Collection
 }
 
 var (
-	host = os.Getenv("BLUEPRINT_DB_HOST")
-	port = os.Getenv("BLUEPRINT_DB_PORT")
-	//database = os.Getenv("BLUEPRINT_DB_DATABASE")
+	host     = os.Getenv("BLUEPRINT_DB_HOST")
+	port     = os.Getenv("BLUEPRINT_DB_PORT")
+	database = os.Getenv("BLUEPRINT_DB_DATABASE")
 )
 
 func New() Service {
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(fmt.Sprintf("mongodb://%s:%s", host, port)))
+
+	booksColl := client.Database(database).Collection("books")
+	authorsColl := client.Database(database).Collection("authors")
+	borrowersColl := client.Database(database).Collection("borrowers")
 
 	if err != nil {
 		log.Fatal(err)
 
 	}
 	return &service{
-		db: client,
+		db:            client,
+		booksColl:     booksColl,
+		authorsColl:   authorsColl,
+		borrowersColl: borrowersColl,
 	}
 }
 
