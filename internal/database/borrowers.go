@@ -1,10 +1,12 @@
 package database
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type Borrower struct {
-	ID       string
-	Name     string
-	BirthDay string
-	Email    string
+	ID       primitive.ObjectID `json:"id" bson:"_id"`
+	Name     string             `json:"name" bson:"name"`
+	Birthday string             `json:"birthday" bson:"birthday"`
+	Email    string             `json:"email" bson:"email"`
 }
 
 func (s *service) CreateBorrower() (*Borrower, error) {

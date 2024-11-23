@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/testcontainers/testcontainers-go/modules/mongodb"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func mustStartMongoContainer() (func(context.Context) error, error) {
@@ -31,6 +32,8 @@ func mustStartMongoContainer() (func(context.Context) error, error) {
 }
 
 func TestMain(m *testing.M) {
+	database = "curly_test"
+
 	teardown, err := mustStartMongoContainer()
 	if err != nil {
 		log.Fatalf("could not start mongodb container: %v", err)
@@ -58,4 +61,25 @@ func TestHealth(t *testing.T) {
 	if stats["message"] != "It's healthy" {
 		t.Fatalf("expected message to be 'It's healthy', got %s", stats["message"])
 	}
+}
+
+func (s *service) deleteAuthorColl(ctx context.Context) error {
+	filter := bson.M{}
+
+	_, err := s.authorsColl.DeleteMany(ctx, filter)
+	return err
+}
+
+func (s *service) deleteBookColl(ctx context.Context) error {
+	filter := bson.M{}
+
+	_, err := s.booksColl.DeleteMany(ctx, filter)
+	return err
+}
+
+func (s *service) deleteBorrowerColl(ctx context.Context) error {
+	filter := bson.M{}
+
+	_, err := s.borrowersColl.DeleteMany(ctx, filter)
+	return err
 }

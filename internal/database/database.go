@@ -8,6 +8,7 @@ import (
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -15,12 +16,13 @@ import (
 type Service interface {
 	Health() map[string]string
 
-	ListBooks() ([]Book, error)
-	AddBook() (*Book, error)
-	BorrowBook() (*Book, error)
+	ListBooks(ctx context.Context) ([]Book, error)
+	AddBook(ctx context.Context, book BookRequest) (*primitive.ObjectID, error)
+	GetBook(ctx context.Context, bookID primitive.ObjectID) (*Book, error)
+	BorrowBook(ctx context.Context, bookId string, borrowerId string) (*Book, error)
 
-	CreateAuthor() (*Author, error)
-	GetAuthor() (*Author, error)
+	CreateAuthor(ctx context.Context, author AuthorRequest) (*primitive.ObjectID, error)
+	GetAuthor(ctx context.Context, authorID primitive.ObjectID) (*Author, error)
 
 	CreateBorrower() (*Borrower, error)
 	GetBorrower() (*Borrower, error)
