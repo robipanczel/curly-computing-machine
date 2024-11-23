@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -16,7 +17,7 @@ func TestCreateAuthor(t *testing.T) {
 
 	authorRequest := AuthorRequest{
 		Name:     "Bober",
-		Birthday: "1996-05-17",
+		Birthday: time.Date(1996, time.May, 17, 0, 0, 0, 0, time.UTC),
 		Email:    "bober@author.com",
 	}
 
@@ -41,7 +42,7 @@ func TestCreateAuthor(t *testing.T) {
 			name: "author already exists",
 			author: AuthorRequest{
 				Name:     "Bober",
-				Birthday: "1996-05-17",
+				Birthday: time.Date(1996, time.May, 17, 0, 0, 0, 0, time.UTC),
 				Email:    "pingvin@author.com",
 			},
 			errMsg: "author already exists",
@@ -50,7 +51,7 @@ func TestCreateAuthor(t *testing.T) {
 			name: "email already exists",
 			author: AuthorRequest{
 				Name:     "Skunks",
-				Birthday: "1996-05-17",
+				Birthday: time.Date(1996, time.May, 17, 0, 0, 0, 0, time.UTC),
 				Email:    "bober@author.com",
 			},
 			errMsg: "email already exists",
@@ -76,7 +77,7 @@ func TestGetAuthor(t *testing.T) {
 
 	authorRequest := AuthorRequest{
 		Name:     "Bober",
-		Birthday: "1996-05-17",
+		Birthday: time.Date(1996, time.May, 17, 0, 0, 0, 0, time.UTC),
 		Email:    "bober@author.com",
 	}
 

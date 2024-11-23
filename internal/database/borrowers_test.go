@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -16,7 +17,7 @@ func TestCreateBorrower(t *testing.T) {
 
 	borrowerRequest := BorrowerRequest{
 		Name:     "Bober",
-		Birthday: "1996-05-17",
+		Birthday: time.Date(1996, time.May, 17, 0, 0, 0, 0, time.UTC),
 		Email:    "bober@hotmail.com",
 	}
 
@@ -41,7 +42,7 @@ func TestCreateBorrower(t *testing.T) {
 			name: "borrower already exists",
 			borrower: BorrowerRequest{
 				Name:     "Bober",
-				Birthday: "1996-05-17",
+				Birthday: time.Date(1996, time.May, 17, 0, 0, 0, 0, time.UTC),
 				Email:    "skunks@hotmail.com",
 			},
 			errMsg: "borrower already exists",
@@ -50,7 +51,7 @@ func TestCreateBorrower(t *testing.T) {
 			name: "email already exists",
 			borrower: BorrowerRequest{
 				Name:     "Bober",
-				Birthday: "1996-05-18",
+				Birthday: time.Date(1996, time.May, 18, 0, 0, 0, 0, time.UTC),
 				Email:    "bober@hotmail.com",
 			},
 			errMsg: "email already exists",
@@ -76,7 +77,7 @@ func TestGetBorrower(t *testing.T) {
 
 	borrowerRequest := BorrowerRequest{
 		Name:     "Bober",
-		Birthday: "1996-05-17",
+		Birthday: time.Date(1996, time.May, 17, 0, 0, 0, 0, time.UTC),
 		Email:    "bober@hotmail.com",
 	}
 

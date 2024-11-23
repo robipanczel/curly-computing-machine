@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -16,7 +17,7 @@ func TestAddBook(t *testing.T) {
 
 	authorRequest := AuthorRequest{
 		Name:     "Bober",
-		Birthday: "1996-05-17",
+		Birthday: time.Date(1996, time.May, 17, 0, 0, 0, 0, time.UTC),
 		Email:    "bober@author.com",
 	}
 	authorID, err := srv.CreateAuthor(context.Background(), authorRequest)
@@ -89,7 +90,7 @@ func TestListBooks(t *testing.T) {
 
 	authorRequest := AuthorRequest{
 		Name:     "Bober",
-		Birthday: "1996-05-17",
+		Birthday: time.Date(1996, time.May, 17, 0, 0, 0, 0, time.UTC),
 		Email:    "bober@author.com",
 	}
 	authorID, err := srv.CreateAuthor(context.Background(), authorRequest)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -13,14 +14,14 @@ import (
 type Borrower struct {
 	ID       primitive.ObjectID `json:"id" bson:"_id"`
 	Name     string             `json:"name" bson:"name"`
-	Birthday string             `json:"birthday" bson:"birthday"`
+	Birthday time.Time          `json:"birthday" bson:"birthday"`
 	Email    string             `json:"email" bson:"email"`
 }
 
 type BorrowerRequest struct {
-	Name     string `json:"name" bson:"name"`
-	Birthday string `json:"birthday" bson:"birthday"`
-	Email    string `json:"email" bson:"email"`
+	Name     string    `json:"name" bson:"name"`
+	Birthday time.Time `json:"birthday" bson:"birthday"`
+	Email    string    `json:"email" bson:"email"`
 }
 
 func (s *service) CreateBorrower(ctx context.Context, borrower BorrowerRequest) (*primitive.ObjectID, error) {
