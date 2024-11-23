@@ -11,7 +11,7 @@ import (
 func TestCreateAuthor(t *testing.T) {
 	srv := New()
 
-	err := srv.(*service).deleteAuthorColl(context.Background())
+	err := srv.(*service).deleteColls(context.Background())
 	assert.NoError(t, err)
 
 	authorRequest := AuthorRequest{
@@ -71,7 +71,7 @@ func TestCreateAuthor(t *testing.T) {
 func TestGetAuthor(t *testing.T) {
 	srv := New()
 
-	err := srv.(*service).deleteAuthorColl(context.Background())
+	err := srv.(*service).deleteColls(context.Background())
 	assert.NoError(t, err)
 
 	authorRequest := AuthorRequest{

@@ -11,7 +11,7 @@ import (
 func TestAddBook(t *testing.T) {
 	srv := New()
 
-	err := srv.(*service).deleteAuthorColl(context.Background())
+	err := srv.(*service).deleteColls(context.Background())
 	assert.NoError(t, err)
 
 	authorRequest := AuthorRequest{
@@ -19,7 +19,6 @@ func TestAddBook(t *testing.T) {
 		Birthday: "1996-05-17",
 		Email:    "bober@author.com",
 	}
-
 	authorID, err := srv.CreateAuthor(context.Background(), authorRequest)
 	assert.NoError(t, err)
 	assert.NotNil(t, authorID)
@@ -30,7 +29,6 @@ func TestAddBook(t *testing.T) {
 		AuthorID:    *authorID,
 		Genres:      []string{"fantasy"},
 	}
-
 	bookID, err := srv.AddBook(context.Background(), bookRequest)
 	assert.NoError(t, err)
 	assert.NotNil(t, bookID)
@@ -81,4 +79,39 @@ func TestAddBook(t *testing.T) {
 			assert.Nil(t, id)
 		})
 	}
+}
+
+func TestListBooks(t *testing.T) {
+	srv := New()
+
+	err := srv.(*service).deleteColls(context.Background())
+	assert.NoError(t, err)
+
+	authorRequest := AuthorRequest{
+		Name:     "Bober",
+		Birthday: "1996-05-17",
+		Email:    "bober@author.com",
+	}
+	authorID, err := srv.CreateAuthor(context.Background(), authorRequest)
+	assert.NoError(t, err)
+	assert.NotNil(t, authorID)
+
+	emptyBooks, err := srv.ListBooks(context.Background())
+	assert.NoError(t, err)
+	assert.Equal(t, 0, len(emptyBooks))
+
+	bookRequest := BookRequest{
+		Title:       "Hobbit",
+		Description: "The Hobbit is set in Middle-earth",
+		AuthorID:    *authorID,
+		Genres:      []string{"fantasy"},
+	}
+	bookID, err := srv.AddBook(context.Background(), bookRequest)
+	assert.NoError(t, err)
+	assert.NotNil(t, bookID)
+
+	books, err := srv.ListBooks(context.Background())
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(books))
+	assert.Equal(t, bookRequest.Title, books[0].Title)
 }

@@ -63,23 +63,17 @@ func TestHealth(t *testing.T) {
 	}
 }
 
-func (s *service) deleteAuthorColl(ctx context.Context) error {
+func (s *service) deleteColls(ctx context.Context) error {
 	filter := bson.M{}
 
 	_, err := s.authorsColl.DeleteMany(ctx, filter)
-	return err
-}
-
-func (s *service) deleteBookColl(ctx context.Context) error {
-	filter := bson.M{}
-
-	_, err := s.booksColl.DeleteMany(ctx, filter)
-	return err
-}
-
-func (s *service) deleteBorrowerColl(ctx context.Context) error {
-	filter := bson.M{}
-
-	_, err := s.borrowersColl.DeleteMany(ctx, filter)
+	if err != nil {
+		return err
+	}
+	_, err = s.booksColl.DeleteMany(ctx, filter)
+	if err != nil {
+		return err
+	}
+	_, err = s.borrowersColl.DeleteMany(ctx, filter)
 	return err
 }
