@@ -24,9 +24,9 @@ type Service interface {
 	CreateAuthor(ctx context.Context, author AuthorRequest) (*primitive.ObjectID, error)
 	GetAuthor(ctx context.Context, authorID primitive.ObjectID) (*Author, error)
 
-	CreateBorrower() (*Borrower, error)
-	GetBorrower() (*Borrower, error)
-	BorrowedBooks() ([]Book, error)
+	CreateBorrower(ctx context.Context, borrower BorrowerRequest) (*primitive.ObjectID, error)
+	GetBorrower(ctx context.Context, borrowerID primitive.ObjectID) (*Borrower, error)
+	BorrowedBooks(ctx context.Context) ([]Borrower, error)
 	// TODO: Could be useful ReturnBorrowed()
 }
 
