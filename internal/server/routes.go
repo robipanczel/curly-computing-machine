@@ -26,6 +26,23 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.Get("/health", s.healthHandler)
 
+	r.Route("/books", func(r chi.Router) {
+		r.Get("/", s.ListBooks)
+		r.Post("/", s.AddBook)
+		r.Post("/{book_id}/borrow", s.BorrowBook)
+	})
+
+	r.Route("/authors", func(r chi.Router) {
+		r.Post("/", s.CreateAuthor)
+		r.Get("/{author_id}", s.GetAuthor)
+	})
+
+	r.Route("/borrowers", func(r chi.Router) {
+		r.Post("/", s.CreateBorrower)
+		r.Get("/{borrower_id}", s.GetBorrower)
+		r.Get("/{borrower_id}/books", s.BorrowedBooks)
+	})
+
 	return r
 }
 

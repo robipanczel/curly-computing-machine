@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -25,6 +26,18 @@ type BookRequest struct {
 	AuthorID    primitive.ObjectID `json:"author_id" bson:"author_id"`
 	Genres      []string           `json:"genres" bson:"genres"`
 	Available   bool               `json:"available" bson:"available"`
+}
+
+func (b *BookRequest) Bind(r *http.Request) error {
+	if b.AuthorID.IsZero() {
+		return fmt.Errorf("author_id is required")
+	}
+
+	if b.Title == "" {
+		return fmt.Errorf("title is required")
+	}
+
+	return nil
 }
 
 func (s *service) ListBooks(ctx context.Context) ([]Book, error) {

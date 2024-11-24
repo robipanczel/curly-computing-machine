@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,10 +19,31 @@ type Author struct {
 	Email    string             `json:"email" bson:"email"`
 }
 
+func (a *Author) Render(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
 type AuthorRequest struct {
 	Name     string    `json:"name" bson:"name"`
 	Birthday time.Time `json:"birthday" bson:"birthday"`
 	Email    string    `json:"email" bson:"email"`
+}
+
+func (a *AuthorRequest) Bind(r *http.Request) error {
+	if a.Birthday.IsZero() {
+		return fmt.Errorf("birthday is required")
+	}
+
+	//TODO: regex validation
+	if a.Email == "" {
+		return fmt.Errorf("email is required")
+	}
+
+	if a.Name == "" {
+		return fmt.Errorf("name is required")
+	}
+
+	return nil
 }
 
 func (s *service) CreateAuthor(ctx context.Context, author AuthorRequest) (*primitive.ObjectID, error) {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,10 +21,30 @@ type Borrower struct {
 	Books    []primitive.ObjectID `json:"books" bson:"books"`
 }
 
+func (b *Borrower) Render(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
 type BorrowerRequest struct {
 	Name     string    `json:"name" bson:"name"`
 	Birthday time.Time `json:"birthday" bson:"birthday"`
 	Email    string    `json:"email" bson:"email"`
+}
+
+func (b *BorrowerRequest) Bind(r *http.Request) error {
+	if b.Birthday.IsZero() {
+		return fmt.Errorf("birthday is required")
+	}
+
+	if b.Email == "" {
+		return fmt.Errorf("email is required")
+	}
+
+	if b.Name == "" {
+		return fmt.Errorf("name is required")
+	}
+
+	return nil
 }
 
 func (s *service) CreateBorrower(ctx context.Context, borrower BorrowerRequest) (*primitive.ObjectID, error) {
