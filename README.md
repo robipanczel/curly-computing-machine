@@ -6,6 +6,7 @@ Curly project
 
 Simple RestAPI. The API requires a mongodb connection, please create a .env file based on the .env.example file. A makefile is available to get started easily.
 Or you can start the API and the database by running the docker compose file with `docker compose up`, it will build and start both services.
+There is a `openapi.yml` AI generated file for basic API documentation.
 
 ## MakeFile
 
