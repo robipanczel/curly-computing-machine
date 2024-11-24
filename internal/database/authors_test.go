@@ -15,23 +15,25 @@ func TestCreateAuthor(t *testing.T) {
 	err := srv.(*service).deleteColls(context.Background())
 	assert.NoError(t, err)
 
-	authorRequest := AuthorRequest{
-		Name:     "Bober",
-		Birthday: time.Date(1996, time.May, 17, 0, 0, 0, 0, time.UTC),
-		Email:    "bober@author.com",
-	}
+	t.Run("should create author", func(t *testing.T) {
+		authorRequest := AuthorRequest{
+			Name:     "Bober",
+			Birthday: time.Date(1996, time.May, 17, 0, 0, 0, 0, time.UTC),
+			Email:    "bober@author.com",
+		}
 
-	id, err := srv.CreateAuthor(context.Background(), authorRequest)
-	assert.NoError(t, err)
-	assert.NotNil(t, id)
+		id, err := srv.CreateAuthor(context.Background(), authorRequest)
+		assert.NoError(t, err)
+		assert.NotNil(t, id)
 
-	author, err := srv.GetAuthor(context.Background(), *id)
-	assert.NoError(t, err)
-	assert.NotNil(t, author)
+		author, err := srv.GetAuthor(context.Background(), *id)
+		assert.NoError(t, err)
+		assert.NotNil(t, author)
 
-	assert.Equal(t, authorRequest.Name, author.Name)
-	assert.Equal(t, authorRequest.Birthday, author.Birthday)
-	assert.Equal(t, authorRequest.Email, author.Email)
+		assert.Equal(t, authorRequest.Name, author.Name)
+		assert.Equal(t, authorRequest.Birthday, author.Birthday)
+		assert.Equal(t, authorRequest.Email, author.Email)
+	})
 
 	testcases := []struct {
 		name   string
@@ -85,19 +87,25 @@ func TestGetAuthor(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, id)
 
-	author, err := srv.GetAuthor(context.Background(), *id)
-	assert.NoError(t, err)
-	assert.NotNil(t, author)
+	t.Run("should get author", func(t *testing.T) {
+		author, err := srv.GetAuthor(context.Background(), *id)
+		assert.NoError(t, err)
+		assert.NotNil(t, author)
 
-	assert.Equal(t, authorRequest.Name, author.Name)
-	assert.Equal(t, authorRequest.Birthday, author.Birthday)
-	assert.Equal(t, authorRequest.Email, author.Email)
+		assert.Equal(t, authorRequest.Name, author.Name)
+		assert.Equal(t, authorRequest.Birthday, author.Birthday)
+		assert.Equal(t, authorRequest.Email, author.Email)
+	})
 
-	noAuthor, err := srv.GetAuthor(context.Background(), primitive.NewObjectID())
-	assert.Nil(t, noAuthor)
-	assert.NoError(t, err)
+	t.Run("should not get author if author doesn't exist", func(t *testing.T) {
+		noAuthor, err := srv.GetAuthor(context.Background(), primitive.NewObjectID())
+		assert.Nil(t, noAuthor)
+		assert.NoError(t, err)
+	})
 
-	noIdAuthor, err := srv.GetAuthor(context.Background(), primitive.ObjectID{})
-	assert.Nil(t, noIdAuthor)
-	assert.NoError(t, err)
+	t.Run("should not get author if searching for null authorID", func(t *testing.T) {
+		noIdAuthor, err := srv.GetAuthor(context.Background(), primitive.ObjectID{})
+		assert.Nil(t, noIdAuthor)
+		assert.NoError(t, err)
+	})
 }

@@ -9,13 +9,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Borrower struct {
-	ID       primitive.ObjectID `json:"id" bson:"_id"`
-	Name     string             `json:"name" bson:"name"`
-	Birthday time.Time          `json:"birthday" bson:"birthday"`
-	Email    string             `json:"email" bson:"email"`
+	ID       primitive.ObjectID   `json:"id" bson:"_id"`
+	Name     string               `json:"name" bson:"name"`
+	Birthday time.Time            `json:"birthday" bson:"birthday"`
+	Email    string               `json:"email" bson:"email"`
+	Books    []primitive.ObjectID `json:"books" bson:"books"`
 }
 
 type BorrowerRequest struct {
@@ -83,4 +85,29 @@ func (s *service) getBorrowerByFilter(ctx context.Context, filter bson.D) (*Borr
 		return nil, err
 	}
 	return &borrower, nil
+}
+
+func (s *service) borrowBookByUser(ctx context.Context, borrowerID primitive.ObjectID, bookID primitive.ObjectID) error {
+	filter := bson.M{
+		"_id": borrowerID,
+	}
+
+	update := bson.M{
+		"$push": bson.M{
+			"books": bookID,
+		},
+	}
+
+	opt := options.FindOneAndUpdate().SetReturnDocument(options.After)
+
+	var updatedBorrower Borrower
+	err := s.borrowersColl.FindOneAndUpdate(ctx, filter, update, opt).Decode(&updatedBorrower)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return fmt.Errorf("borrower doesn't exist")
+		}
+		return fmt.Errorf("find and update: %v", err)
+	}
+
+	return nil
 }

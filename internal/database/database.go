@@ -19,7 +19,7 @@ type Service interface {
 	ListBooks(ctx context.Context) ([]Book, error)
 	AddBook(ctx context.Context, book BookRequest) (*primitive.ObjectID, error)
 	GetBook(ctx context.Context, bookID primitive.ObjectID) (*Book, error)
-	BorrowBook(ctx context.Context, bookId string, borrowerId string) (*Book, error)
+	BorrowBook(ctx context.Context, bookID primitive.ObjectID, borrowerID primitive.ObjectID) error
 
 	CreateAuthor(ctx context.Context, author AuthorRequest) (*primitive.ObjectID, error)
 	GetAuthor(ctx context.Context, authorID primitive.ObjectID) (*Author, error)

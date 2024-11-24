@@ -16,7 +16,7 @@ type Book struct {
 	Description string             `json:"description" bson:"description"`
 	AuthorID    primitive.ObjectID `json:"author_id" bson:"author_id"`
 	Genres      []string           `json:"genres" bson:"genres"`
-	BorrowerID  primitive.ObjectID `json:"borrower_id" bson:"borrower_id"`
+	Available   bool               `json:"available" bson:"available"`
 }
 
 type BookRequest struct {
@@ -24,6 +24,7 @@ type BookRequest struct {
 	Description string             `json:"description" bson:"description"`
 	AuthorID    primitive.ObjectID `json:"author_id" bson:"author_id"`
 	Genres      []string           `json:"genres" bson:"genres"`
+	Available   bool               `json:"available" bson:"available"`
 }
 
 func (s *service) ListBooks(ctx context.Context) ([]Book, error) {
@@ -92,9 +93,46 @@ func (s *service) GetBook(ctx context.Context, bookID primitive.ObjectID) (*Book
 	return &book, nil
 }
 
-func (s *service) BorrowBook(ctx context.Context, bookId string, borrowerId string) (*Book, error) {
-	//TODO
-	return nil, nil
+func (s *service) BorrowBook(ctx context.Context, bookID primitive.ObjectID, borrowerID primitive.ObjectID) error {
+	book, err := s.GetBook(ctx, bookID)
+	if err != nil {
+		return fmt.Errorf("get book: %v", err)
+	}
+
+	if book == nil {
+		return fmt.Errorf("book doesn't exist")
+	}
+
+	borrower, err := s.GetBorrower(ctx, borrowerID)
+	if err != nil {
+		return fmt.Errorf("get borrower %v", err)
+	}
+
+	if borrower == nil {
+		return fmt.Errorf("borrower doesn't exist")
+	}
+
+	if !book.Available {
+		return fmt.Errorf("book isn't available")
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"available": false,
+		},
+	}
+
+	_, err = s.booksColl.UpdateByID(ctx, book.ID, update)
+	if err != nil {
+		return fmt.Errorf("book available update: %v", err)
+	}
+
+	err = s.borrowBookByUser(ctx, borrowerID, bookID)
+	if err != nil {
+		return fmt.Errorf("borrow book by user: %v", err)
+	}
+
+	return nil
 }
 
 func (s *service) getBookByFilter(ctx context.Context, filter bson.D) (*Book, error) {
