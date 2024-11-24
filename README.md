@@ -4,9 +4,10 @@ Curly project
 
 ## Getting Started
 
-Simple RestAPI. The API requires a mongodb connection, please create a .env file based on the .env.example file. A makefile is available to get started easily.
-Or you can start the API and the database by running the docker compose file with `docker compose up`, it will build and start both services.
-There is a `openapi.yml` AI generated file for basic API documentation or visit [OpenAPI](https://robipanczel.github.io/curly-computing-machine/) for live api documentation.
+1. Run docker compose up to start everything automatically, or
+2. Create a .env file from .env.example and use the Makefile for manual setup (MongoDB required)
+
+Documentation is available in openapi.yml or through our live OpenAPI interface.
 
 ## MakeFile
 
