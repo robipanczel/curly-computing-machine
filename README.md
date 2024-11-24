@@ -7,7 +7,7 @@ Curly project
 1. Run docker compose up to start everything automatically, or
 2. Create a .env file from .env.example and use the Makefile for manual setup (MongoDB required)
 
-Documentation is available in openapi.yml or through our live OpenAPI interface.
+Documentation is available in openapi.yml or through our [live OpenAPI interface](https://robipanczel.github.io/curly-computing-machine/).
 
 ## MakeFile
 
