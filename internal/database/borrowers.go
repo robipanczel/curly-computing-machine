@@ -71,8 +71,38 @@ func (s *service) GetBorrower(ctx context.Context, borrowerID primitive.ObjectID
 	return &borrower, nil
 }
 
-func (s *service) BorrowedBooks(ctx context.Context) ([]Borrower, error) {
-	return nil, nil
+func (s *service) BorrowedBooks(ctx context.Context, borrowerID primitive.ObjectID) ([]Book, error) {
+	borrower, err := s.GetBorrower(ctx, borrowerID)
+	if err != nil {
+		return nil, fmt.Errorf("get borrower: %v", err)
+	}
+	if borrower == nil {
+		return nil, fmt.Errorf("borrower doesn't exist")
+	}
+
+	if len(borrower.Books) == 0 {
+		return []Book{}, nil
+	}
+
+	filter := bson.M{
+		"_id": bson.M{
+			"$in": borrower.Books,
+		},
+	}
+
+	cursor, err := s.booksColl.Find(ctx, filter)
+	if err != nil {
+		return nil, fmt.Errorf("find books: %v", err)
+	}
+	defer cursor.Close(ctx)
+
+	var books []Book
+	err = cursor.All(ctx, &books)
+	if err != nil {
+		return nil, fmt.Errorf("decode books: %v", err)
+	}
+
+	return books, nil
 }
 
 func (s *service) getBorrowerByFilter(ctx context.Context, filter bson.D) (*Borrower, error) {
