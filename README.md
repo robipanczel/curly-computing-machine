@@ -1,10 +1,11 @@
 # Project curly-computing-machine
 
-One Paragraph of project description goes here
+Curly project
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+Simple RestAPI. The API requires a mongodb connection, please create a .env file based on the .env.example file. A makefile is available to get started easily.
+Or you can start the API and the database by running the docker compose file with `docker compose up`, it will build and start both services.
 
 ## MakeFile
 

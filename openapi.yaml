@@ -1,0 +1,295 @@
+openapi: 3.0.0
+info:
+  title: Curly API
+  description: Secret project or something
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+components:
+  schemas:
+    ObjectID:
+      type: string
+      pattern: "^[0-9a-fA-F]{24}$"
+      description: MongoDB ObjectID in hex format
+
+    BookRequest:
+      type: object
+
+    Book:
+      type: object
+
+    AuthorRequest:
+      type: object
+
+    Author:
+      type: object
+
+    BorrowerRequest:
+      type: object
+
+    Borrower:
+      type: object
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+
+paths:
+  /books:
+    get:
+      summary: List all books
+      description: Retrieves a list of all books in the library
+      responses:
+        "200":
+          description: List of books retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      summary: Add a new book
+      description: Adds a new book to the library
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookRequest"
+      responses:
+        "201":
+          description: Book created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    $ref: "#/components/schemas/ObjectID"
+        "400":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /books/{book_id}/borrow:
+    post:
+      summary: Borrow a book
+      description: Records a book being borrowed by a borrower
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ObjectID"
+        - name: borrower_id
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/ObjectID"
+      responses:
+        "200":
+          description: Book borrowed successfully
+        "400":
+          description: Invalid book_id or borrower_id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /authors:
+    post:
+      summary: Create a new author
+      description: Creates a new author in the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthorRequest"
+      responses:
+        "201":
+          description: Author created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    $ref: "#/components/schemas/ObjectID"
+        "400":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /authors/{author_id}:
+    get:
+      summary: Get author details
+      description: Retrieves details of a specific author
+      parameters:
+        - name: author_id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ObjectID"
+      responses:
+        "200":
+          description: Author details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Author"
+        "400":
+          description: Invalid author_id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Author not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /borrowers:
+    post:
+      summary: Create a new borrower
+      description: Creates a new borrower in the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BorrowerRequest"
+      responses:
+        "201":
+          description: Borrower created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    $ref: "#/components/schemas/ObjectID"
+        "400":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /borrowers/{borrower_id}:
+    get:
+      summary: Get borrower details
+      description: Retrieves details of a specific borrower
+      parameters:
+        - name: borrower_id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ObjectID"
+      responses:
+        "200":
+          description: Borrower details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Borrower"
+        "400":
+          description: Invalid borrower_id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Borrower not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /borrowers/{borrower_id}/books:
+    get:
+      summary: List borrowed books
+      description: Retrieves a list of books borrowed by a specific borrower
+      parameters:
+        - name: borrower_id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/ObjectID"
+      responses:
+        "200":
+          description: List of borrowed books retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+        "400":
+          description: Invalid borrower_id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
